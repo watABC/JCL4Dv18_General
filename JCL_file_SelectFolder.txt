@@ -1,0 +1,31 @@
+﻿  //JCL_file_SelectFolder
+  //20140602 yabe
+  //フォルダ選択ダイアログを表示して
+  //選択されたかどうか・選択されたフォルダのパス・選択されたフォルダの中身を返す
+  //20181226 wat 不可視ファイルを無視する
+
+C_POINTER($1)  //フォルダパスのポインタ
+C_POINTER($2;$aryFileListPtr)  //ファイル名配列のポインタ
+$aryFileListPtr:=$2
+
+C_LONGINT($0;$open_ok)
+
+C_TEXT($folder_Path)
+
+  //エラーコール
+ON ERR CALL("JCL_file_OnErrorCall")
+
+  //フォルダ選択ダイアログを表示
+$folder_Path:=Select folder
+$open_ok:=OK
+If ($open_ok=1)
+	  //20181226 wat 不可視ファイルを無視する
+	DOCUMENT LIST($folder_Path;$aryFileListPtr->;Ignore invisible)
+	
+End if 
+
+  //エラーコール終了
+ON ERR CALL("")
+
+$1->:=$folder_Path
+$0:=$open_ok

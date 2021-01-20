@@ -1,0 +1,11 @@
+﻿  //JCL_sql_dump
+  //20190809 wat
+  //全データをSQL文に書き出し、JCL_sql_dumpとセットで使う
+  //from 4Djapan Knowledgebase
+  // http://kb.4d-japan.com/Tips/2338/
+
+  //全データをSQLステートメントファイルに保存
+$folder_path:=Get 4D folder(Database folder)+"exportdata"+Folder separator
+SQL EXPORT DATABASE($folder_path)
+
+ALERT("end")

@@ -1,0 +1,36 @@
+﻿  //JCL_prt_NumOfPages
+  //20190110 wat
+  //Jiro_prt_NumOfPages
+  //20100715 wat new
+  //印刷対象配列、レコードカウント数からページ数を求める
+
+C_POINTER($1;$inAryPtr)
+$inAryPtr:=$1  //印刷対象配列のポインタ
+C_LONGINT($2;$maxRowsInPage)
+$maxRowsInPage:=$2  //ページあたりの最大行数
+C_LONGINT($0;$numOfPages)  //ページ数を返す
+C_LONGINT($numOfRecs;$div;$mod)
+
+  //印刷対象の配列の行数を得る
+$numOfRecs:=Size of array($inAryPtr->)
+If ($maxRowsInPage>=1)
+	
+	  //1以上で割り算
+	$div:=Trunc($numOfRecs/$maxRowsInPage;0)  //割り算して整数部で切り捨て
+	$mod:=Mod($numOfRecs;$maxRowsInPage)  //余りを求める
+	
+	If ($mod=0)  //割り切れた場合
+		
+		$numOfPages:=$div
+		
+	Else 
+		
+		$numOfPages:=$div+1  //１ページ増やす
+		
+	End if 
+	
+Else 
+	$numOfPages:=0
+End if 
+
+$0:=$numOfPages

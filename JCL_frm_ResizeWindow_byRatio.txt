@@ -1,0 +1,22 @@
+﻿  //JCL_frm_ResizeWindow_byRatio
+  //20181107 wat
+  //縦横比を維持しながら比率でウインドウサイズを変更、ここでもリサイズイベントが発生してしまう
+
+C_LONGINT($1;$width)
+$width:=$1
+C_LONGINT($2;$height)
+$height:=$2
+C_REAL($3;$ratio)
+$ratio:=$3
+
+C_LONGINT($left;$top;$right;$bottom)
+C_LONGINT($wRef)
+
+$wref:=Frontmost window
+GET WINDOW RECT($left;$top;$right;$bottom;$wref)
+
+$right:=($width*$ratio)+$left
+$bottom:=($height*$ratio)+$top
+
+
+SET WINDOW RECT($left;$top;$right;$bottom;$wref)  //ここでリサイズイベントが発生

@@ -1,0 +1,18 @@
+﻿  //JCL_sql_restore
+  //20190809 wat
+  //from 4Djapan Knowledgebase
+  //全データをSQL文から復元、JCL_sql_dumpとセットで使う
+
+  //SQLステートメントファイルより全データを復元
+$folder_path:=Get 4D folder(Database folder)+"exportdata"+Folder separator+"SQLExport"+Folder separator
+FOLDER LIST($folder_path;$folder_names)
+For ($i;1;Size of array($folder_names))
+	DOCUMENT LIST($folder_path+$folder_names{$i};$doc_names)
+	For ($i2;1;Size of array($doc_names))
+		If ($doc_names{$i2}="Export@")
+			SQL EXECUTE SCRIPT($folder_path+$folder_names{$i}+Folder separator+$doc_names{$i2};SQL On error confirm)
+		End if 
+	End for 
+End for 
+
+ALERT("end")

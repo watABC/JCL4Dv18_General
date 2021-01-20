@@ -1,0 +1,24 @@
+﻿  //JCL_file_HTML_toWebArea
+  //20170724 wat
+  // オンメモリーのHTMLを　一時ファイルに書き出し、Webエリアにロードさせる
+
+C_TEXT($1;$html)
+$html:=$1
+C_TEXT($2;$objName)
+$objName:=$2
+C_TEXT($3;$fileName)
+$fileName:=$3
+
+WA OPEN URL(*;$objName;"about:blank")
+
+TEXT TO BLOB($html;$blob;UTF8 C string)
+
+  //ファイル保存 // 20170302 wat 一時ファイルの保存場所をドキュメントフォルダに変更
+C_TEXT($tempPath)
+$tempPath:=JCL_file_DocumentsFolderPath ($fileName;"DMS4D_TMP")
+BLOB TO DOCUMENT($tempPath;$blob)
+
+  //表示
+C_TEXT($posixPath)
+$posixPath:="file:///"+Convert path system to POSIX($tempPath)
+WA OPEN URL(*;$objName;$posixPath)

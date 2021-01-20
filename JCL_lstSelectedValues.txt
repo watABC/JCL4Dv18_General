@@ -1,0 +1,40 @@
+﻿  //JCL_lstSelectedValues
+  //20181115 wat
+  //リストボックスの選択されている行の値配列を取得
+  //引数は名前でもらう
+  //20190727 wat リストボックス名を与えていなくて動いていなかった、修正
+
+C_TEXT($1;$inListBox)
+$inListBox:=$1  //対象となるリストボックス名
+C_POINTER($2;$inAryPtr)
+$inAryPtr:=$2  //リストに表示されているデータ配列のポインタ
+C_POINTER($3;$outAryPtr)
+$outAryPtr:=$3  //選択されているデータ配列のポインタ（返す）
+C_LONGINT($0;$cnt)  //配列数
+$cnt:=0
+
+C_LONGINT($selCnt)
+C_LONGINT($sizeOfAry;$i)
+C_POINTER($objPtr)
+$objPtr:=OBJECT Get pointer(Object named;$inListBox)
+
+  //配列をクリア
+DELETE FROM ARRAY($outAryPtr->;1;Size of array($outAryPtr->))
+
+  //空行がクリックされたら、配列クリアのまま
+$selCnt:=JCL_lstSelectedCount ($inListBox)
+If ($selCnt>=1)
+	  //選択されている ID を取得
+	$sizeOfAry:=Size of array($inAryPtr->)
+	For ($i;1;$sizeOfAry)
+		
+		If ($objPtr->{$i}=True)
+			
+			APPEND TO ARRAY($outAryPtr->;$inAryPtr->{$i})
+			$cnt:=$cnt+1
+			
+		End if 
+	End for 
+End if 
+
+$0:=$cnt

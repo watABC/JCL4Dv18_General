@@ -1,0 +1,24 @@
+﻿  //JCL_HTTP_Request_POST
+  //20190321 wat
+  //zz_HTTP_Request_POST
+  //20171121 yabe
+  //HTTP Requestを連続で呼ぶとヘッダーが上書きされPOST変数が正しく送信できないためラップする
+
+C_TEXT($1;$url)
+$url:=$1
+C_TEXT($2;$param)
+$param:=$2
+C_POINTER($3;$contentsPtr)
+$contentsPtr:=$3
+C_LONGINT($0;$ret)
+
+  //4DのHTTP Requestは”HTTP POST method”でも”Content-Type”を”text/plain; charset=UTF-8”
+  //で送信するため、サーバ側でPOST変数を受ける場合は”application/x-www-form-urlencoded”を設定する
+ARRAY TEXT($headerNames;0)
+APPEND TO ARRAY($headerNames;"Content-Type")
+ARRAY TEXT($headerValues;0)
+APPEND TO ARRAY($headerValues;"application/x-www-form-urlencoded")
+
+$ret:=HTTP Request(HTTP POST method;$url;$param;$contentsPtr->;$headerNames;$headerValues;*)
+
+$0:=$ret

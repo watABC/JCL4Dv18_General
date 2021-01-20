@@ -1,0 +1,22 @@
+﻿  //JCL_file_DirSeparator
+  //20090602　矢部　新規作成
+  //OSに合わせたフォルダの区切りを返す
+  //20110920 wat
+  //20190104 wat プラットフォームはIs macOS、Is Windowsで取得
+
+C_TEXT($0;$separator)
+$separator:=""
+
+If (Is Windows)
+	  //winなら
+	$separator:="\\"
+	
+End if 
+
+If (Is macOS)
+	  //macなら
+	$separator:=":"
+	
+End if 
+
+$0:=$separator

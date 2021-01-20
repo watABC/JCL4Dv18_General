@@ -1,0 +1,18 @@
+﻿  //JCL_str_StripCRLF
+  //20181030 wat
+  //改行をストリップ
+
+C_TEXT($1;$inStr)
+$inStr:=$1
+C_TEXT($0;$outStr)
+$outStr:=$inStr
+C_TEXT($crlf;$cr;$lf)
+$crlf:=Char(Carriage return)+Char(Line feed)
+$cr:=Char(Carriage return)
+$lf:=Char(Line feed)
+
+$outStr:=Replace string($outStr;$crlf;" ")
+$outStr:=Replace string($outStr;$cr;" ")
+$outStr:=Replace string($outStr;$lf;" ")
+
+$0:=$outStr

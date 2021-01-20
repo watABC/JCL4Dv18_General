@@ -1,0 +1,12 @@
+﻿  //JCL_SerialNumber
+  //20180206 wat yabe
+  //シリアル番号を発行、テーブルポインタをもらって、最新の番号を返す
+
+C_POINTER($1;$tblPtr)
+$tblPtr:=$1  //テーブルのポインタ
+C_LONGINT($0;$counter)
+$counter:=0  //カウンターの値、戻り値
+
+$counter:=Sequence number($tblPtr->)
+
+$0:=$counter  //新しいレコードＩD

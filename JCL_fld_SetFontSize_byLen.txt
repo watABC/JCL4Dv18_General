@@ -1,0 +1,37 @@
+﻿  //JCL_fld_SetFontSize_byLen
+  //20170904
+  //テキストフィールド　文字数によってフォントサイズを小さくする
+
+C_TEXT($1;$fldName)
+$fldName:=$1
+C_LONGINT($2;$capaLen)
+$capaLen:=$2
+C_LONGINT($len)
+C_LONGINT($org_size;$new_size)
+C_REAL($ratio)
+C_POINTER($fldPtr)
+C_LONGINT($org_size2)
+
+$fldPtr:=OBJECT Get pointer(Object named;$fldName)
+
+$org_size:=OBJECT Get font size($fldPtr->)
+$new_size:=$org_size
+
+$len:=Length($fldPtr->)
+If ($capaLen<$len)
+	
+	$ratio:=$capaLen/$len
+	$new_size:=$org_size*$ratio
+	
+End if 
+
+  //C_TEXT($m)
+  //$m:="JCL_fld_SetFontSize_byLen"
+  //$m:=$m+": $fldName=["+$fldName+"]"
+  //$m:=$m+": $org_size=["+String($org_size)+"]"
+  //$m:=$m+": $org_size2=["+String($org_size2)+"]"
+  //$m:=$m+": $len=["+String($len)+"]"
+  //$m:=$m+": $new_size=["+String($new_size)+"]"
+  //JCL_file_Logout ($m)
+
+OBJECT SET FONT SIZE($fldPtr->;$new_size)

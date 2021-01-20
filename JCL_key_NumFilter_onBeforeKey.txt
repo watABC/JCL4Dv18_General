@@ -1,0 +1,21 @@
+﻿  //JCL_key_NumFilter_onBeforeKey
+  //20180825 wat
+  //A05_lstJO_DEBIT_onBeforeKey
+  //20170310 wat
+  // キーが押されて、セルに値が入力される前に実行
+
+
+Case of 
+	: (Position(Keystroke;"0123456789.-")>0)
+		
+	: (Keystroke=Char(Tab))  // タブキーで次の列に移動
+		
+	: (Keystroke=Char(Backspace))
+		
+	: (Keystroke=Char(Backspace key))
+		
+	Else 
+		
+		FILTER KEYSTROKE("")
+		
+End case 

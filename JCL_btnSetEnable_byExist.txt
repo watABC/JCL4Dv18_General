@@ -1,0 +1,25 @@
+﻿  //JCL_btnSetEnable_byExist
+  //20190615 wat
+  //リストボックスに行が1行以上あればボタンはイネイブル
+
+C_TEXT($1;$inListBox)
+$inListBox:=$1  //対象となるリストボックス名
+C_TEXT($2;$inButton)
+$inButton:=$2  //イネイブル対象となるボタン名
+C_LONGINT($numOfRows)
+
+C_POINTER($objPtr)
+$objPtr:=OBJECT Get pointer(Object named;$inListBox)
+$numOfRows:=Size of array($objPtr->)
+
+  //リストに表示されている行が一つ以上の場合にイネイブル、
+  //そうでなければボタンはグレイ
+  //$numOfRows:=JCL_lstExistCount ($inListBox)
+  //$numOfRows:=LISTBOX Get number of rows ( * ;$inListBox ) 
+If ($numOfRows>=1)
+	OBJECT SET ENABLED(*;$inButton;True)
+	
+Else 
+	OBJECT SET ENABLED(*;$inButton;False)
+	
+End if 

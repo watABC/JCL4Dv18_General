@@ -1,0 +1,22 @@
+﻿  //JCL_frm_MoveWindow
+  //20181107 wat
+  //トップレフトでウインドウを移動
+
+C_LONGINT($1;$inTop)
+$inTop:=$1
+C_LONGINT($2;$inLeft)
+$inLeft:=$2
+C_LONGINT($width;$height)
+
+C_LONGINT($left;$top;$right;$bottom)
+C_LONGINT($wRef)
+
+$wref:=Frontmost window
+GET WINDOW RECT($left;$top;$right;$bottom;$wref)
+
+$left:=$inLeft
+$right:=$inLeft+($right-$left)
+$top:=$inTop
+$bottom:=$inTop+($bottom-$top)
+
+SET WINDOW RECT($left;$top;$right;$bottom;$wref)

@@ -1,0 +1,64 @@
+﻿  //JCL_lst_Copy
+  //20190129 wat
+  // 汎用のリストボックス　コピー
+  //20200602 wat 非表示列は出力しない。最後のタブは取り除く
+
+C_POINTER($1;$lstbxPtr)
+$lstbxPtr:=$1
+C_TEXT($buf)
+$buf:=" "  // 20140923 「ID」という文字がファイルの先頭にあるとエクセルがSYLKファイルと勘違いするため先頭に空白を出力
+C_TEXT($tabChar;$crChar)
+$tabChar:=Char(Tab)
+$crChar:=Char(Carriage return)+Char(Line feed)
+$crChar:=Char(Line feed)  //20170222
+C_LONGINT($numOfCols;$numOfRows;$col;$row)
+
+  // 列数、行数を求める
+$numOfCols:=LISTBOX Get number of columns($lstbxPtr->)
+$numOfRows:=LISTBOX Get number of rows($lstbxPtr->)
+
+ARRAY TEXT($aryColNames;0)
+ARRAY TEXT($aryHeaderNames;0)
+ARRAY POINTER($aryColVars;0)
+ARRAY POINTER($aryHeaderVers;0)
+ARRAY BOOLEAN($aryColsVisible;0)
+ARRAY POINTER($aryStyles;0)
+
+LISTBOX GET ARRAYS($lstbxPtr->;$aryColNames;$aryHeaderNames;$aryColVars;$aryHeaderVers;$aryColsVisible;$aryStyles)
+
+  // ヘッダを出力
+For ($col;1;$numOfCols)
+	  //非表示列は出力しない
+	If ($aryColsVisible{$col}=True)
+		$str:=OBJECT Get title(*;$aryHeaderNames{$col})
+		$buf:=$buf+$str+$tabChar
+	End if 
+	
+	  //最後の列は最後のタブ文字を取り除いて改行を追加
+	If ($col=$numOfCols)
+		$buf:=Substring($buf;1;Length($buf)-1)
+		$buf:=$buf+$crChar
+		
+	End if 
+End for 
+
+  // ボディを出力
+For ($row;1;$numOfRows)
+	
+	For ($col;1;$numOfCols)
+		  //非表示列は出力しない
+		If ($aryColsVisible{$col}=True)
+			$str:=String($aryColVars{$col}->{$row})  // データ型によってはエラーになる可能性がある
+			$buf:=$buf+$str+$tabChar
+		End if 
+		
+		  //最後の列は最後のタブ文字を取り除いて改行を追加
+		If ($col=$numOfCols)
+			$buf:=Substring($buf;1;Length($buf)-1)
+			$buf:=$buf+$crChar
+			
+		End if 
+	End for 
+End for 
+
+SET TEXT TO PASTEBOARD($buf)

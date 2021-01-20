@@ -1,0 +1,15 @@
+﻿  //JCL_lstExistCount
+  //20190615 wat
+  //v11以降で有効なはず、v17で実装
+  //リストボックスに表示されている行が何行あるか返す。汎用メソッド
+
+C_TEXT($1;$inListBox)
+$inListBox:=$1  //対象となるリストボックス名
+C_LONGINT($0;$cnt)
+
+C_POINTER($objPtr)
+$objPtr:=OBJECT Get pointer(Object named;$inListBox)
+
+$cnt:=Size of array($objPtr->)
+
+$0:=$cnt

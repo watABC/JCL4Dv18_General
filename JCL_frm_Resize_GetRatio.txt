@@ -1,0 +1,34 @@
+﻿  //JCL_frm_Resize_GetRatio
+  //20181108 wat
+  //リサイズの縦横比を取得　リサイズイベント中に繰り返し実行することになる
+
+C_LONGINT($1;$width)
+$width:=$1
+C_LONGINT($2;$height)
+$height:=$2
+C_REAL($0;$ratio)
+C_REAL($w_ratio;$h_ratio)
+C_LONGINT($w1;$h1)
+
+GET WINDOW RECT($left;$top;$right;$bottom)
+$w1:=($right-$left)
+$h1:=($bottom-$top)
+$w_ratio:=($right-$left)/$width
+$h_ratio:=($bottom-$top)/$height
+If ($w_ratio>$h_ratio)
+	$ratio:=$h_ratio
+	
+Else 
+	$ratio:=$w_ratio
+	
+End if 
+
+C_TEXT($m)
+$m:="JCL_frm_Resize_GetRatio"
+$m:=$m+": $w1="+String($w1)+","
+$m:=$m+": $h1="+String($h1)+","
+$m:=$m+": $ratio="+String($ratio)
+
+  //SET TEXT TO PASTEBOARD($m) //20200418 wat
+
+$0:=$ratio

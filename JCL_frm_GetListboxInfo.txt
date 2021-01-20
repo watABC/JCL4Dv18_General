@@ -1,0 +1,58 @@
+﻿  //JCL_frm_GetListboxInfo
+  //20181106 wat
+  //リストボックスの列情報を取得
+  //20181226 wat v17オブジェクト記法
+
+C_TEXT($1;$inListbox)
+$inListbox:=$1
+C_POINTER($2;$inAryColInfoPtr)  //オブジェクト配列
+$inAryColInfoPtr:=$2
+C_POINTER($3;$inObjPtr)  //オブジェクト配列
+$inObjPtr:=$3
+C_LONGINT($left;$top;$right;$bottom)
+
+$inObjPtr->:=New object
+$inObjPtr->rowsHeight:=LISTBOX Get rows height(*;$inListbox)  //行の高さ
+$inObjPtr->footersHeight:=LISTBOX Get footers height(*;$inListbox)  //フッタの行高さ
+$inObjPtr->headersHeight:=LISTBOX Get headers height(*;$inListbox)  //ヘッダーの高さ
+
+  //リストボックスの各列について、列幅とフォントサイズを取得
+ARRAY TEXT($aryColNames;0)
+ARRAY TEXT($aryHeaderNames;0)
+ARRAY POINTER($aryColVars;0)
+ARRAY POINTER($aryHeaderVars;0)
+ARRAY BOOLEAN($aryColsVisible;0)
+ARRAY POINTER($aryStyles;0)
+ARRAY TEXT($aryFooterNames;0)
+ARRAY POINTER($aryFooterVars;0)
+C_OBJECT($obj)
+C_LONGINT($i;$numOfCols)
+C_LONGINT($colWidth;$fontSize;$headerFontSize;$footerFontSize)
+$numOfCols:=LISTBOX Get number of columns(*;$inListbox)
+LISTBOX GET ARRAYS(*;$inListbox;$aryColNames;$aryHeaderNames;$aryColVars;$aryHeaderVars;$aryColsVisible;$aryStyles;\
+$aryFooterNames;$aryFooterVars)
+$numOfCols:=Size of array($aryColNames)
+For ($i;1;$numOfCols)
+	  //オブジェクト配列に格納
+	$obj:=New object
+	$obj.name:=$aryColNames{$i}
+	$obj.colWidth:=LISTBOX Get column width(*;$aryColNames{$i})  //列幅
+	$obj.fontSize:=OBJECT Get font size(*;$aryColNames{$i})  //フォントサイズ
+	$obj.headerName:=$aryHeaderNames{$i}  //ヘッダー名
+	$obj.headerFontSize:=OBJECT Get font size(*;$aryHeaderNames{$i})  //ヘッダーのフォントサイズ
+	$obj.footerName:=$aryFooterNames{$i}  //フッター名
+	$obj.footerFontSize:=OBJECT Get font size(*;$aryFooterNames{$i})  //フッターのフォントサイズ
+	
+	  //オブジェクト配列に追加
+	APPEND TO ARRAY($inAryColInfoPtr->;$obj)
+	
+	  //$m:="JCL_frm_GetListboxInfo"
+	  //$m:=$m+": $aryColNames{$i}=["+$aryColNames{$i}+"]"
+	  //$m:=$m+": $i=["+String($i)+"]"
+	  //$m:=$m+": $colWidth=["+String($colWidth)+"]"
+	  //$m:=$m+": $fontSize=["+String($fontSize)+"]"
+	  //JCL_file_Logout ($m)
+	
+End for 
+
+

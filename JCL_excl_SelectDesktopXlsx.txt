@@ -1,0 +1,23 @@
+﻿  //JCL_excl_SelectDesktopXlsx
+  //20191003 hisa wat
+  //ファイル名を渡されて、ファイルオープンダイアログをデスクトップデフォルトで表示、結局開いたファイルのパスを返す。
+
+C_TEXT($1;$fileName)
+$fileName:=$1
+C_TEXT($0;$filePath)
+C_TEXT($docName)
+C_TEXT($DocType)
+C_TEXT($title)
+C_LONGINT($options)
+$options:=0
+$DocType:=".xlsx"
+$title:="エクセルファイルを選択してください"
+
+$folderPath:=System folder(Desktop)
+$filePath:=JCL_file_MakeFilePath ($folderPath;$fileName)
+$docName:=Select document($folderPath;$DocType;$title;$options)
+
+  //ファイルパスを取得
+$filePath:=Document
+
+$0:=$filePath

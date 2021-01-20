@@ -1,0 +1,16 @@
+﻿  //JCL_Notes
+  //20160504 wat
+  //リリースノートとか、お読みくださいとか、Webエリアで見られるように
+
+  // 一覧ウインドウ表示は、本来_Displayだがモジュール化をしないで展開
+
+C_LONGINT($wref)
+C_LONGINT($0)
+C_TEXT($title)
+
+$wref:=Open form window("N01_List";Movable form dialog box;Horizontally centered;Vertically centered)
+$title:="N01_List"
+DIALOG("N01_List")
+CLOSE WINDOW($Wref)  //ウィンドウを閉じる 
+
+$0:=OK

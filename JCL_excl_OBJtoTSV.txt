@@ -1,0 +1,36 @@
+﻿  //JCL_excl_OBJtoTSV
+  //20190928 wat
+  //ファイルパスから、ExcelのJSONオブジェクトを読み込んでTSVテキストバッファを得る
+
+C_OBJECT($1;$xlsx)
+$xlsx:=$1
+C_TEXT($0;$buf)
+C_TEXT($buf)
+C_LONGINT($numOfSheets;$numOfRows;$numOfValues)
+C_LONGINT($i;$k;$m)
+
+  // シート
+$numOfSheets:=$xlsx.sheets.length
+For ($i;0;$numOfSheets-1)
+	  // シート名
+	  //$name:=$xlsx.sheets[$i].name
+	  //ALERT("$i="+string($i)+"["+$name+"]")// シート名
+	
+	  // 行
+	$numOfRows:=$xlsx.sheets[$i].rows.length
+	For ($k;0;$numOfRows-1)
+		  // 列
+		$numOfValues:=$xlsx.sheets[$i].rows[$k].values.length
+		  //タブ区切りテキストにする　
+		For ($m;0;$numOfValues-1)
+			  // 値をタブ区切りで連結
+			$buf:=$buf+$xlsx.sheets[$i].rows[$k].values[$m]+Char(Tab)
+			
+		End for 
+		$buf:=$buf+Char(Carriage return)
+		
+	End for 
+End for 
+$buf:=Substring($buf;1;(Length($buf)-1))  //最後のCRをトル、最後の改行をトル
+
+$0:=$buf

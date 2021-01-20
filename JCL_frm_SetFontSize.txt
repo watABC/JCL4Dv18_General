@@ -1,0 +1,25 @@
+﻿  //JCL_frm_SetFontSize
+  //フォームオブジェクト　文字数によってフォントサイズを小さくする
+  //20170905 yabe wat
+
+C_TEXT($1;$fldName)
+$fldName:=$1
+C_LONGINT($width;$height)
+C_LONGINT($org_width;$org_height)
+
+  // 文字列描画後の　オフジェクトの最適サイズ
+OBJECT GET BEST SIZE(*;$fldName;$width;$height)
+
+$font_size:=OBJECT Get font size(*;$fldName)
+
+JCL_frm_GetObjectSize ($fldName;->$org_width;->$org_height)
+
+While ($org_width<$width)
+	
+	$font_size:=$font_size-1
+	
+	OBJECT SET FONT SIZE(*;$fldName;$font_size)
+	
+	OBJECT GET BEST SIZE(*;$fldName;$width;$height)
+	
+End while 

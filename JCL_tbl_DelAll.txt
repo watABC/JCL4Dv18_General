@@ -1,0 +1,20 @@
+﻿  //JCL_tbl_DelAll
+  //20181208 wat
+  //テーブルのレコードを全件削除、どこかで作った記憶があるが見つからなかったので作成
+  //usage: JCL_tbl_DelAll(->[ABC];0)
+  //第２パラメータでシリアル番号の初期値を指定する、通常はゼロ
+  //テーブル毎のSH_DellAlも使えていい、理由は、うかつにコードをコピーして
+  //　うっかり他のテーブル名を渡してレコードを消してしまうかもしれないから
+
+C_POINTER($1;$tblPtr)
+$tblPtr:=$1  //テーブルのポインタ
+C_LONGINT($2;$sequenceNumber)
+$sequenceNumber:=$2
+
+READ WRITE($tblPtr->)
+ALL RECORDS($tblPtr->)
+DELETE SELECTION($tblPtr->)
+READ ONLY($tblPtr->)
+
+  //シリアル番号を初期化、テーブルポインタをもらって、番号をゼロに戻す
+SET DATABASE PARAMETER($tblPtr->;Table sequence number;$sequenceNumber)

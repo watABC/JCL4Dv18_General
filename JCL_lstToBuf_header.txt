@@ -1,0 +1,45 @@
+﻿  //JCL_lstToBuf_header
+  //20190709 wat
+  //リストボックスのヘッダをテキストバッファに返す
+
+C_POINTER($1;$lstbxPtr)
+$lstbxPtr:=$1
+C_POINTER($2;$bufPtr)
+$bufPtr:=$2
+C_TEXT($buf)
+C_TEXT($0)
+C_LONGINT($numOfCols;$numOfRows;$col;$row)
+C_TEXT($str)
+C_TEXT($tabChar;$crlf;$cr;$lf)
+$tabChar:=Char(Tab)
+$crlf:=Char(Carriage return)+Char(Line feed)
+
+ARRAY TEXT($aryColNames;0)
+ARRAY TEXT($aryHeaderNames;0)
+ARRAY POINTER($aryColVars;0)
+ARRAY POINTER($aryHeaderVers;0)
+ARRAY BOOLEAN($aryColsVisible;0)
+ARRAY POINTER($aryStyles;0)
+
+  // 列数を求める
+$numOfCols:=LISTBOX Get number of columns($lstbxPtr->)
+$numOfRows:=LISTBOX Get number of rows($lstbxPtr->)
+LISTBOX GET ARRAYS($lstbxPtr->;$aryColNames;$aryHeaderNames;$aryColVars;$aryHeaderVers;$aryColsVisible;$aryStyles)
+
+  // ヘッダを出力
+For ($col;1;$numOfCols)
+	
+	If ($col<$numOfCols)
+		
+		$str:=OBJECT Get title(*;$aryHeaderNames{$col})
+		$buf:=$buf+$str+$tabChar
+		
+	Else 
+		
+		$str:=OBJECT Get title(*;$aryHeaderNames{$col})
+		$buf:=$buf+$str+$tabChar+$crlf
+		
+	End if 
+End for 
+
+$bufPtr->:=$bufPtr->+$buf

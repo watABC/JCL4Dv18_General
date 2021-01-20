@@ -1,0 +1,39 @@
+﻿  //JCL_4dj_RemakeGraph4print
+  //Jiro_4dj_RemakeGraph4print
+  //20130910 wat
+
+Begin SQL
+	/*
+	
+	説明：
+	グラフSVGの中からグラデーション要素を削除し印刷できるようにする
+	
+	注意：
+	現在のMac OSではグラデーションを印刷することができない。
+	将来のMac OSのでグラデーションが印刷時に考慮されるようになれば、このメソッドは不要になる。
+	
+	呼び出し例：
+	C_PICTURE(vGraph)
+	RemakeGraph4print(->vGraph)
+	
+	*/
+End SQL
+
+C_POINTER($1;$picturePtr)
+$picturePtr:=$1
+
+  //SVGをXML化
+C_BLOB($pictureBlob)
+PICTURE TO BLOB($picturePtr->;$pictureBlob;".svg")  //SVGを一時変数に取り出す
+$xml:=DOM Parse XML variable($pictureBlob;False)  //XMLコマンドで扱えるようにパースする
+
+ARRAY TEXT($xml_ElementRefs;0)
+$xml_element:=DOM Find XML element($xml;"/svg/defs/linearGradient";$xml_ElementRefs)
+$max:=Size of array($xml_ElementRefs)
+For ($i;1;$max)
+	DOM REMOVE XML ELEMENT($xml_ElementRefs{$i})
+End for 
+
+  //ピクチャ化
+SVG EXPORT TO PICTURE($xml;$picturePtr->)  //ピクチャ変数に書き出す
+DOM CLOSE XML($xml)  //XMLを削除してメモリを解放（忘れるとメモリーリークの原因）

@@ -1,0 +1,34 @@
+﻿  //JCL_frm_FindUserForm
+  //Jiro_frm_FindUserForm
+  // 20120131 wat new
+  // ユーザフォームがあるか？
+
+C_POINTER($1;$tblPtr)
+$tblPtr:=$1  //テーブルポインタ
+C_TEXT($2;$sourceForm)
+$sourceForm:=$2  // ソースフォーム名
+C_TEXT($3;$targetForm)
+$targetForm:=$3  // 検索対象フォーム名
+
+ARRAY TEXT($userFormAry;0)
+C_BOOLEAN($isExist)
+$isExist:=False
+
+  // ユーザフォーム名を配列に取得
+LIST USER FORMS($tblPtr->;$sourceForm;$userFormAry)
+
+$sizeOfAry:=Size of array($userFormAry)
+If ($sizeOfAry>0)
+	For ($i;1;$sizeOfAry)
+		
+		  // 名前が同じなら
+		If ($userFormAry{$i}=$targetForm)
+			
+			$isExist:=True
+			
+		End if 
+		
+	End for 
+End if 
+
+$0:=$isExist

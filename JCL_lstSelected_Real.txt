@@ -1,0 +1,25 @@
+﻿  //JCL_lstSelected_Real
+  //20190815 wat
+  //汎用メソッド。 リストボックスの行選択を取得して、
+  //連結されている Real の配列から、最初の選択行のバリューを返す
+
+C_TEXT($1;$inListBox)
+$inListBox:=$1  //対象となるリストボックス名
+C_POINTER($2;$inDataAryPtr)
+$inDataAryPtr:=$2  // real データ配列のポインタ
+C_REAL($0;$realValue)  //リアルのリターンバリュー
+$realValue:=0
+C_LONGINT($foundRow)
+
+C_POINTER($objPtr)
+$objPtr:=OBJECT Get pointer(Object named;$inListBox)
+
+  //リストボックスの最初に見つかった選択されている行番号を得る
+$foundRow:=JCL_lst_Selected_firstRow ($objPtr)
+If ($foundRow#0)
+	  //配列の値を返す
+	$realValue:=$inDataAryPtr->{$foundRow}
+	
+End if 
+
+$0:=$realValue

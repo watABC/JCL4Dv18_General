@@ -1,0 +1,18 @@
+﻿  //JCL_str_ZeroNumberFormat
+  //Jiro_str_ZeroNumberFormat
+  //20140124 wat
+  // 桁数分のゼロ数値フォーマットを作成
+
+C_LONGINT($1;$digit)
+$digit:=$1
+C_TEXT($format;$0)
+$format:=""
+C_LONGINT($i)
+
+For ($i;1;$digit)
+	
+	$format:=$format+"0"
+	
+End for 
+
+$0:=$format

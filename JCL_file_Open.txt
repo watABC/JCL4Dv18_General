@@ -1,0 +1,22 @@
+﻿  //JCL_file_Open
+  //20180103 wat
+  //Jiro_file_Open
+  //20101209 wat new
+  //ファイルオープンダイアログ
+
+C_POINTER($1)
+C_TIME($FileRef)  //ファイル参照
+C_LONGINT($0;$dlg_ok)  //ダイアログＯＫ
+
+  //エラーコール
+ON ERR CALL("Jiro_file_OnErrorCall")
+
+$FileRef:=Open document("";"")
+$dlg_ok:=OK
+
+  //エラーコール終了
+ON ERR CALL("")
+
+  //ダイアログがＯＫされたかは戻り値で返す
+$1->:=$FileRef
+$0:=$dlg_ok

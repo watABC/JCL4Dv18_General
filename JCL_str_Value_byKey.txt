@@ -1,0 +1,39 @@
+﻿  //JCL_str_Value_byKey
+  //Jiro_str_Value_byKey
+  //20150828 wat
+  //タブ区切り改行で1レコードの　テキストブロック　からキーに該当するバリューを返す
+  //キーバリューテーブルのような文字列ブロック
+  // name<tab>wat<cr>
+  // Current machine<tab>mmm<cr>
+  // Current machine owner<tab>ooo<cr>
+  // Platform<tab>ppp<cr>
+
+C_TEXT($1;$inFileText)
+$inFileText:=$1
+C_TEXT($2;$key)
+$key:=$2
+C_TEXT($0;$value)
+ARRAY TEXT($lineAry;0)
+ARRAY TEXT($itemAry;0)
+C_LONGINT($numOfLines;$numOfItems)
+
+  //ヘッダなし、１行目からデータ、改行を区切り文字にして、要素を配列に読み込む
+$numOfLines:=JCL_str_Extract ($inFileText;Char(Carriage return);->$lineAry)
+For ($i;1;$numOfLines)
+	
+	  //内容が空じゃなければバリューを取得、タブコードを区切りにして、配列に読み込む　要素は2つ
+	DELETE FROM ARRAY($itemAry;1;Size of array($itemAry))
+	$numOfItems:=JCL_str_Extract ($lineAry{$i};Char(Tab);->$itemAry)
+	If ($numOfItems>=2)
+		
+		If ($itemAry{1}=$key)
+			
+			$value:=$itemAry{2}
+			
+			$i:=$numOfItems  // ループを抜ける
+			
+		End if 
+	End if 
+End for 
+
+$0:=$value

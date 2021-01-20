@@ -1,0 +1,24 @@
+﻿  //JCL_frm_Edit
+  //Jiro_frm_Edit
+  //20120131 wat
+  //ソースフォームを編集してユーザフォームを作成する
+
+C_POINTER($1;$tblPtr)
+$tblPtr:=$1  // フォームが属しているテーブル
+C_TEXT($2;$sourceForm)
+$sourceForm:=$2  // ソースフォーム名
+C_TEXT($3;$targetForm)
+$targetForm:=$3  // 検索対象フォーム名
+C_BOOLEAN($isExist)
+$isExist:=False
+
+$isExist:=JCL_frm_FindUserForm ($tblPtr;$sourceForm;$targetForm)
+
+If ($isExist=False)
+	
+	CREATE USER FORM($tblPtr->;$sourceForm;$targetForm)
+	
+End if 
+
+EDIT FORM($tblPtr->;$sourceForm;$targetForm)
+

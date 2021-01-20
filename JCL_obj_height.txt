@@ -1,0 +1,16 @@
+﻿  //JCL_obj_height
+  //20190711 wat
+  //オブジェクトの高さを取得
+
+C_TEXT($1;$inObjName)
+$inObjName:=$1  //対象となるオブジェクト名
+C_LONGINT($0;$height)
+
+C_LONGINT($objLeft;$objTop;$objRight;$objBottom)
+
+  //オブジェクトの座標
+OBJECT GET COORDINATES(*;$inObjName;$objLeft;$objTop;$objRight;$objBottom)
+
+$height:=$objBottom-$objTop
+
+$0:=$height

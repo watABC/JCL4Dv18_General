@@ -1,0 +1,34 @@
+﻿  //JCL_tbl_GetPtr_byName
+  //20130119 wat
+  //テーブル名からポインタを返す
+
+  //JCL_tbl_GetPtr_byName
+  //20111103 wat
+  //テーブルポインタを取得
+
+C_TEXT($1;$inTblName)
+$inTblName:=$1
+C_POINTER($0;$outTblPtr)
+C_TEXT($tblName)
+C_POINTER($tblPtr)
+C_LONGINT($numOfTables;$i)
+
+$numOfTables:=Get last table number
+
+For ($i;1;$numOfTables)
+	
+	If (Is table number valid($i)=True)
+		
+		$tblPtr:=Table($i)
+		$tblName:=Table name($i)
+		If ($tblName=$inTblName)
+			
+			$outTblPtr:=$tblPtr
+			
+		End if 
+		
+	End if 
+	
+End for 
+
+$0:=$outTblPtr

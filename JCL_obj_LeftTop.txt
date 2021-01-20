@@ -1,0 +1,58 @@
+﻿  //JCL_obj_LeftTop
+  //20160307 wat
+  //オブジェクトの左と上を取得、スクリーン絶対座標
+  //20190617 wat オブジェクト名
+
+C_TEXT($1;$inObjName)
+$inObjName:=$1  //対象となるオブジェクト名
+C_POINTER($2;$3)
+C_LONGINT($top;$left)
+
+  //カレンダーダイアログのサイズは、398 x 441
+  //ダイアログのサイズは、外からもらうようにした
+C_LONGINT($4;$dlg_width)
+$dlg_width:=$4
+C_LONGINT($5;$dlg_height)
+$dlg_height:=$5
+
+C_LONGINT($fw_left;$fw_top;$fw_right;$fw_bottom)
+C_LONGINT($objLeft;$objTop;$objRight;$objBottom)
+C_LONGINT($scr_height;$scr_width)
+C_LONGINT($over_x;$over_y)
+
+  //フロントウインドウの座標
+GET WINDOW RECT($fw_left;$fw_top;$fw_right;$fw_bottom)
+
+  //クリックされたボタンの座標
+OBJECT GET COORDINATES(*;$inObjName;$objLeft;$objTop;$objRight;$objBottom)
+
+  //スクリーンないに表示されているか、計算して、調整 20160313
+$scr_height:=Screen height
+$scr_width:=Screen width
+
+  //ライトとボトムを評価、スクリーンからはみ出していたら移動量を求める
+$over_x:=($objRight+$fw_left+$dlg_width)-$scr_width
+$over_y:=($objBottom+$fw_top+$dlg_height)-$scr_height
+
+If ($over_x<=0)
+	  //スクリーン内に表示されている
+	$left:=$objRight+$fw_left
+	
+Else 
+	  //スクリーン内に表示されていないので、左へ移動
+	$left:=$objRight+$fw_left-$over_x
+	
+End if 
+
+If ($over_y<=0)
+	  //スクリーン内に表示されている
+	$top:=$objBottom+$fw_top
+	
+Else 
+	  //スクリーン内に表示されていないので、上へ移動
+	$top:=$objBottom+$fw_top-$over_y
+	
+End if 
+
+$2->:=$left
+$3->:=$top

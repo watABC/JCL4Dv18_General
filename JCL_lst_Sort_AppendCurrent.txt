@@ -1,0 +1,36 @@
+﻿  //JCL_lst_Sort_AppendCurrent
+  //20160503 wat
+  //ソート順を覚える、ソート履歴に現状を追加
+  //XX リストボックス メソッドのOn After Sortで実行する
+  // JCL_lst_Sort_AppendCurrent (->vMR01_lstMR;->vMR01_lstMR_HeaderNames;->vMR01_lstMR_SortOrders)
+  // 関連メソッド：xx_frmOnLoad, xx_frmDefInit, xx_lstXX_OnAfgterSort, xx_lstXX_make
+
+C_POINTER($1;$lstboxPtr)
+$lstboxPtr:=$1
+C_POINTER($2;$aryHeaderNamesPtr)
+$aryHeaderNamesPtr:=$2
+C_POINTER($3;$arySortOrdersPtr)
+$arySortOrdersPtr:=$3
+C_LONGINT($i;$sizeOfAry)
+
+ARRAY TEXT($arrColNames;0)
+ARRAY TEXT($arrHeaderNames;0)
+ARRAY POINTER($arrColVars;0)
+ARRAY POINTER($arrHeaderVars;0)
+ARRAY BOOLEAN($arrColsVisible;0)
+ARRAY POINTER($arrStyles;0)
+LISTBOX GET ARRAYS($lstboxPtr->;$arrColNames;$arrHeaderNames;$arrColVars;$arrHeaderVars;$arrColsVisible;$arrStyles)
+
+$sizeOfAry:=Size of array($arrHeaderNames)
+For ($i;1;$sizeOfAry)
+	
+	If ($arrHeaderVars{$i}->#0)
+		
+		APPEND TO ARRAY($aryHeaderNamesPtr->;$arrHeaderNames{$i})
+		APPEND TO ARRAY($arySortOrdersPtr->;$arrHeaderVars{$i}->)
+		
+		$i:=$sizeOfAry
+		
+	End if 
+	
+End for 

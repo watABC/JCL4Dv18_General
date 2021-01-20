@@ -1,0 +1,56 @@
+﻿  //JCL_lstToBuf_body
+  //20190709 wat
+  //リストボックスのヘッダをテキストバッファに返す
+
+C_POINTER($1;$lstbxPtr)
+$lstbxPtr:=$1
+C_POINTER($2;$bufPtr)
+$bufPtr:=$2
+C_TEXT($buf)
+C_TEXT($0)
+C_LONGINT($numOfCols;$numOfRows;$col;$row)
+C_TEXT($str)
+C_TEXT($tabChar;$crlf;$cr;$lf)
+$tabChar:=Char(Tab)
+$crlf:=Char(Carriage return)+Char(Line feed)
+$cr:=Char(Carriage return)
+$lf:=Char(Line feed)
+
+ARRAY TEXT($aryColNames;0)
+ARRAY TEXT($aryHeaderNames;0)
+ARRAY POINTER($aryColVars;0)
+ARRAY POINTER($aryHeaderVers;0)
+ARRAY BOOLEAN($aryColsVisible;0)
+ARRAY POINTER($aryStyles;0)
+
+  // 列数を求める
+$numOfCols:=LISTBOX Get number of columns($lstbxPtr->)
+$numOfRows:=LISTBOX Get number of rows($lstbxPtr->)
+LISTBOX GET ARRAYS($lstbxPtr->;$aryColNames;$aryHeaderNames;$aryColVars;$aryHeaderVers;$aryColsVisible;$aryStyles)
+
+  // ボディを出力
+For ($row;1;$numOfRows)
+	For ($col;1;$numOfCols)
+		
+		If ($col<$numOfCols)
+			$str:=String($aryColVars{$col}->{$row})  // データ型によってはエラーになる可能性がある
+			  //20180522 wat 改行をストリップ
+			  //$str:=Replace string($str;$crlf;" ")
+			  //$str:=Replace string($str;$cr;" ")
+			  //$str:=Replace string($str;$lf;" ")
+			  //20190709 wat 改行を変換したことがわかるように
+			$str:=Replace string($str;$crlf;"<br>")
+			$str:=Replace string($str;$cr;"<br>")
+			$str:=Replace string($str;$lf;"<br>")
+			
+			$buf:=$buf+$str+$tabChar
+			
+		Else 
+			$str:=String($aryColVars{$col}->{$row})  // データ型によってはエラーになる可能性がある
+			$buf:=$buf+$str+$crlf
+			
+		End if 
+	End for 
+End for 
+
+$bufPtr->:=$bufPtr->+$buf

@@ -1,0 +1,58 @@
+﻿  //JCL_str_NextBangouStr
+  //20190110 wat
+  //Jiro_str_NextBangouStr
+  //20140123 wat
+  //番号文字列をもらって、次の番号文字列を返す
+
+C_TEXT($bangou;$1)
+$bangou:=$1
+C_TEXT($0;$newBangou)
+$newBangou:=""
+C_LONGINT($len;$i)
+C_BOOLEAN($isNumber)  // 数字かどうか
+C_LONGINT($digit)  // 数字部分の桁数
+C_TEXT($numStr)  // 数字部分の文字列
+$numStr:=""
+C_TEXT($notNumStr)  // 数字以外の文字列
+C_LONGINT($num)
+$num:=0
+
+$len:=Length($bangou)
+For ($i;$len;1;-1)
+	
+	  //数値かどうか
+	$oneChar:=Substring($bangou;$i;1)
+	$isNumber:=JCL_str_IsNumberChar ($oneChar)
+	
+	  //　数値じゃなかったら
+	If ($isNumber=False)
+		
+		$digit:=$len-$i
+		$numStr:=Substring($bangou;$i+1;$digit)
+		$notNumStr:=Substring($bangou;1;$i)
+		
+		$i:=1  // ループから抜ける
+		
+	End if 
+	
+End for 
+
+  //最後まで数値しかなかった
+If ($isNumber=True)
+	
+	$digit:=$len
+	$numStr:=$bangou
+	$notNumStr:=""
+	
+End if 
+
+  // 一つ数値をインクリメント
+$num:=Num($numStr)
+$num:=$num+1
+
+  // 桁数分のゼロ数値フォーマットを作成
+$format:=JCL_str_ZeroNumberFormat ($digit)
+$newBangou:=String($num;$format)
+$newBangou:=$notNumStr+$newBangou
+
+$0:=$newBangou

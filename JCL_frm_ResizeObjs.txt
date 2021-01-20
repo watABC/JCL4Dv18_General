@@ -1,0 +1,36 @@
+﻿  //JCL_frm_ResizeObjs
+  //20181108 wat
+  //フォームがリサイズされたら、フォームオブジェクトもリサイズ
+  //Usage: オンロードでオブジェクト配列にフォームオブジェクトの情報を取得しておく
+  //20181226 wat v17オブジェクト記法
+
+C_POINTER($1;$inAryObjPtr)  //オブジェクト配列
+$inAryObjPtr:=$1
+C_REAL($2;$ratio)  //リサイズの縦横比を取得
+$ratio:=$2
+C_LONGINT($left;$top;$right;$bottom)
+C_LONGINT($width;$height)
+C_LONGINT($i;$sizeOfAry)
+C_REAL($w_ratio;$h_ratio;$ratio)
+C_LONGINT($fontSize)
+C_TEXT($objName)
+C_OBJECT($obj)
+C_REAL($x1;$y1;$x2;$y2)
+
+  //各オブジェクトに比率で拡大
+$sizeOfAry:=Size of array($inAryObjPtr->)
+For ($i;1;$sizeOfAry)
+	  //すべてのオブジェクトをリサイズ
+	$obj:=$inAryObjPtr->{$i}
+	$objName:=$obj.name
+	$x1:=($obj.x1)*$ratio
+	$y1:=($obj.y1)*$ratio
+	$x2:=($obj.x2)*$ratio
+	$y2:=($obj.y2)*$ratio
+	OBJECT SET COORDINATES(*;$objName;$x1;$y1;$x2;$y2)
+	
+	  //フォントサイズを変更
+	$fontSize:=($obj.fontSize)*$ratio
+	OBJECT SET FONT SIZE(*;$objName;$fontSize)
+	
+End for 

@@ -1,0 +1,54 @@
+﻿  //JCL_str_Trim
+  //Jiro_str_Trim
+  //文字列の先頭および末尾にあるホワイトスペースを取り除く 
+  //20110217 yabe
+
+C_TEXT($1;$0;$str)
+$str:=$1
+
+C_LONGINT($length)
+C_LONGINT($index)
+C_TEXT($char)
+
+  //削除する文字の配列
+ARRAY TEXT($delete_char_ary;0)
+  //APPEND TO ARRAY($delete_char_ary;"　")  `全角スペース
+  //APPEND TO ARRAY($delete_char_ary;" ")  `半角スペース
+  //APPEND TO ARRAY($delete_char_ary;Char(Tab ))
+APPEND TO ARRAY($delete_char_ary;Char(Carriage return))
+APPEND TO ARRAY($delete_char_ary;Char(Line feed))
+
+  //先頭
+Repeat 
+	  //先頭の１文字取得
+	$char:=Substring($str;1;1)
+	
+	  //取得した文字で削除文字配列を検索
+	$index:=Find in array($delete_char_ary;$char)
+	
+	  //削除対象文字なら、先頭の１文字を除いた文字列を取得
+	If ($index#(-1))
+		$str:=Substring($str;2)
+	End if 
+	
+Until ($index=(-1))
+
+  //末尾
+Repeat 
+	
+	$length:=Length($str)
+	
+	  //末尾の１文字取得
+	$char:=Substring($str;$length)
+	
+	  //取得した文字で削除文字配列を検索
+	$index:=Find in array($delete_char_ary;$char)
+	
+	  //削除対象文字なら、末尾の１文字を除いた文字列を取得
+	If ($index#(-1))
+		$str:=Substring($str;1;$length-1)
+	End if 
+	
+Until ($index=(-1))
+
+$0:=$str

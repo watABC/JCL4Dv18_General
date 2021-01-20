@@ -1,0 +1,11 @@
+﻿  //JCL_btnSetVisible
+  //20190617 wat
+  //ボタンを見えなくする
+
+C_TEXT($1;$inButton)
+$inButton:=$1  //イネイブル対象となるボタン名
+C_BOOLEAN($2;$inBool)
+$inBool:=$2  //ブール値
+
+  //引数が真ならボタンは表示、偽なら非表示
+OBJECT SET VISIBLE(*;$inButton;$inBool)  //ボタンを非表示

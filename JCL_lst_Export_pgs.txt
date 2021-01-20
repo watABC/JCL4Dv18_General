@@ -1,0 +1,102 @@
+﻿  //JCL_lst_Export_pgs
+  //20200310 wat
+  // 汎用のリストボックス　書き出し  //JCL_lst_Exportの集大成
+  //20140921 wat yabe
+  //20180522 wat ファイル書き出し方法を変更,  改行をストリップ
+  //20181030 wat 戻り値にファイル名を返す
+  //20190107 wat ike 改行はＬＦ、BLOB経由しない
+
+C_POINTER($1;$lstbxPtr)
+$lstbxPtr:=$1
+C_TEXT($2;$name)
+$name:=$2
+C_LONGINT($3;$pgs_interval)
+$pgs_interval:=$3
+C_TEXT($0)  //20181030 wat
+C_TEXT($buf;$str)
+C_TEXT($tabChar;$crlf;$cr;$lf)
+$buf:=" "  // 20140923 「ID」という文字がファイルの先頭にあるとエクセルがSYLKファイルと勘違いするため先頭に空白を出力
+$tabChar:=Char(Tab)
+$crlf:=Char(Carriage return)+Char(Line feed)
+$cr:=Char(Carriage return)
+$lf:=Char(Line feed)
+C_TEXT($folderPath;$filePath)
+C_LONGINT($numOfCols;$numOfRows;$col;$row)
+C_BOOLEAN($done)
+$done:=False
+C_TEXT($msg)
+
+$name:=$name+JCL_str_Datemark (Current date;Current time)+".txt"
+$dlg_ok:=JCL_dlg_InputOne ("出力先のファイル名：";"フィル名を入力してください。";"OK";"Cancel";->$name)
+If ($dlg_ok=1)
+	  //プログレスバー
+	JCL_pgs_DefInit 
+	JCL_pgs_Show ("リストボックスのヘッダーを書き出しています...")
+	
+	  // 列数を求める
+	$numOfCols:=LISTBOX Get number of columns($lstbxPtr->)
+	$numOfRows:=LISTBOX Get number of rows($lstbxPtr->)
+	
+	ARRAY TEXT($aryColNames;0)
+	ARRAY TEXT($aryHeaderNames;0)
+	ARRAY POINTER($aryColVars;0)
+	ARRAY POINTER($aryHeaderVers;0)
+	ARRAY BOOLEAN($aryColsVisible;0)
+	ARRAY POINTER($aryStyles;0)
+	
+	LISTBOX GET ARRAYS($lstbxPtr->;$aryColNames;$aryHeaderNames;$aryColVars;$aryHeaderVers;$aryColsVisible;$aryStyles)
+	
+	  // ヘッダを出力
+	For ($col;1;$numOfCols)
+		If ($col<$numOfCols)
+			$str:=OBJECT Get title(*;$aryHeaderNames{$col})
+			$buf:=$buf+$str+$tabChar
+			
+		Else 
+			$str:=OBJECT Get title(*;$aryHeaderNames{$col})
+			$buf:=$buf+$str+$tabChar+$crlf
+			
+		End if 
+	End for 
+	
+	  // ボディを出力
+	For ($row;1;$numOfRows)
+		  //プログレスバー
+		If (Mod($row;$pgs_interval)=0)
+			$msg:="リストボックスのボディを書き出しています..."
+			JCL_pgs_SetValue (($row/$numOfRows)*100;$msg+String($row);$row;$numOfRows)
+			DELAY PROCESS(Current process;1)
+		End if 
+		
+		For ($col;1;$numOfCols)
+			  //途中はタブ区切り、最後の列のあとに改行
+			If ($col<$numOfCols)
+				$str:=String($aryColVars{$col}->{$row})  // データ型によってはエラーになる可能性がある、pictとか？
+				  //改行をストリップ
+				$str:=Replace string($str;$crlf;" ")
+				$str:=Replace string($str;$cr;" ")
+				$str:=Replace string($str;$lf;" ")
+				
+				$buf:=$buf+$str+$tabChar
+				
+			Else 
+				$str:=String($aryColVars{$col}->{$row})  // データ型によってはエラーになる可能性がある
+				$buf:=$buf+$str+$crlf
+				
+			End if 
+		End for 
+		$done:=JCL_pgs_IsCancel 
+		If ($done=True)
+			$row:=$numOfRows
+		End if 
+	End for 
+	JCL_pgs_Close 
+	
+	  //ファイルに書き出す
+	$folderPath:=System folder(Desktop)
+	$filePath:=JCL_file_MakeFilePath ($folderPath;$name)
+	TEXT TO DOCUMENT($filePath;$buf;"UTF-8";Document with native format)
+	
+End if 
+
+$0:=$name

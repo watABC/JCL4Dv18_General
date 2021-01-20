@@ -1,0 +1,12 @@
+﻿  //JCL_lst_SetSelect_append
+  //20190122 wat
+  //リストボックス 選択を追加
+
+C_POINTER($1;$inListBoxPtr)
+$inListBoxPtr:=$1  //ターゲットとなるリストボックスのブーリアン配列
+C_LONGINT($2;$row_number)
+$row_number:=$2  //行番号
+
+  //行番号がゼロの場合は何も選択しない
+LISTBOX SELECT ROW($inListBoxPtr->;$row_number;lk add to selection)
+

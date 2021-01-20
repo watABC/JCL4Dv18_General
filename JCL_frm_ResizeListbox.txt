@@ -1,0 +1,66 @@
+﻿  //JCL_frm_OnResizeListbox
+  //20181106 wat
+  //リストボックスをリサイズ
+  //20181226 wat v17オブジェクト記法
+
+C_TEXT($1;$inListbox)  //リストボックス名
+$inListbox:=$1
+C_POINTER($2;$inAryColsPtr)  //列情報配列
+$inAryColsPtr:=$2
+C_POINTER($3;$inObjPtr)  //リストボックス情報オブジェクト
+$inObjPtr:=$3
+C_REAL($4;$ratio)
+$ratio:=$4
+C_LONGINT($i;$sizeOfAry)
+C_OBJECT($obj)
+C_TEXT($objName;$headerName;$footerName)
+C_LONGINT($colWidth;$fontSize;$headerFontSize;$footerFontSize)
+
+  //行の高さ
+C_LONGINT($rowsHeight)
+$rowsHeight:=($inObjPtr->rowsHeight)*$ratio
+LISTBOX SET ROWS HEIGHT(*;$inListbox;$rowsHeight)
+
+  //フッタの行高さ
+C_LONGINT($footersHeight)
+$footersHeight:=($inObjPtr->footersHeight)*$ratio
+LISTBOX SET FOOTERS HEIGHT(*;$inListbox;$footersHeight)
+
+  //ヘッダーの高さ
+C_LONGINT($headersHeight)
+$headersHeight:=($inObjPtr->headersHeight)*$ratio
+LISTBOX SET HEADERS HEIGHT(*;$inListbox;$headersHeight)
+
+  //各オブジェクトに比率で拡大
+$sizeOfAry:=Size of array($inAryColsPtr->)
+For ($i;1;$sizeOfAry)
+	  //すべての列をリサイズ
+	$obj:=$inAryColsPtr->{$i}
+	$objName:=$obj.name
+	
+	  //列幅を変更
+	$colWidth:=($obj.colWidth)*$ratio
+	LISTBOX SET COLUMN WIDTH(*;$objName;$colWidth)
+	
+	  //フォントサイズを変更
+	$fontSize:=($obj.fontSize)*$ratio
+	OBJECT SET FONT SIZE(*;$objName;$fontSize)
+	
+	  //ヘッダーのフォントサイズを変更
+	$headerName:=$obj.headerName
+	$headerFontSize:=($obj.headerFontSize)*$ratio
+	OBJECT SET FONT SIZE(*;$headerName;$headerFontSize)
+	
+	  //フッターのフォントサイズを変更
+	$footerName:=$obj.footerName
+	$footerFontSize:=($obj.footerFontSize)*$ratio
+	OBJECT SET FONT SIZE(*;$footerName;$footerFontSize)
+	
+	  //$m:="JCL_frm_OnResizeListbox"
+	  //$m:=$m+": $objName=["+$objName+"]"
+	  //$m:=$m+": $i=["+String($i)+"]"
+	  //$m:=$m+": $colWidth=["+String($colWidth)+"]"
+	  //$m:=$m+": $fontSize=["+String($fontSize)+"]"
+	  //JCL_file_Logout ($m)
+	
+End for 

@@ -1,0 +1,15 @@
+﻿  //JCL_lstSelectedCount
+  //20181114 wat
+  //v11以降で有効なはず、v17で実装
+  //リストボックスに選択されている行が何行あるか返す。汎用メソッド
+
+C_TEXT($1;$inListBox)
+$inListBox:=$1  //対象となるリストボックス名
+C_LONGINT($0;$cnt)
+
+C_POINTER($objPtr)
+$objPtr:=OBJECT Get pointer(Object named;$inListBox)
+
+$cnt:=Count in array($objPtr->;True)
+
+$0:=$cnt

@@ -1,0 +1,14 @@
+﻿  //JCL_tbl_GetNumOfRecs
+  //20180114 wat
+  //レコードが何件あるか
+
+C_POINTER($1;$tblPtr)
+$tblPtr:=$1
+C_LONGINT($0;$numOfRecs)
+
+READ ONLY($tblPtr->)
+ALL RECORDS($tblPtr->)
+
+$numOfRecs:=Records in selection($tblPtr->)
+
+$0:=$numOfRecs

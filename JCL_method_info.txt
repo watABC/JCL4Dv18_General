@@ -1,0 +1,76 @@
+﻿  //JCL_method_info
+  //20170625 yabe
+  //メソッド名、更新日時、コメント（最初のから行まで）をタブ区切りでデスクトップに書き出す
+
+ARRAY TEXT($ary_method_names;0)
+
+  //すべてのメソッド名を配列に取得
+METHOD GET NAMES($ary_method_names)
+
+  //メソッドの更新日時を配列に取得し、並び替え
+ARRAY DATE($ary_method_dates;0)
+ARRAY LONGINT($ary_method_times;0)
+METHOD GET MODIFICATION DATE($ary_method_names;$ary_method_dates;$ary_method_times)
+MULTI SORT ARRAY($ary_method_dates;<;$ary_method_times;<;$ary_method_names;>)
+
+$structure_name:=JCL_file_StructureName 
+
+  //ストラクチャ名・デイトマークをつけたファイル名で保存先を開く
+C_TEXT($folderPath;$filePath)
+$folderPath:=System folder(Desktop)
+C_TEXT($output_file_name)
+C_TIME($FileRef)  //ファイル参照
+$output_file_name:=$structure_name+"_"+JCL_str_Datemark (Current date;Current time)+".txt"
+$filePath:=JCL_file_MakeFilePath ($folderPath;$output_file_name)
+$open_ok:=JCL_file_OpenForWrite ($filePath;->$FileRef)
+
+C_TEXT($method)
+ARRAY TEXT($ary_lines;0)
+C_LONGINT($line_count)
+C_TEXT($out_method_line)
+
+  //ファイルに書き出す
+If ($open_ok=1)
+	
+	For ($i;1;Size of array($ary_method_names))
+		
+		If (Size of array($ary_lines)>0)
+			DELETE FROM ARRAY($ary_lines;1;Size of array($ary_lines))
+		End if 
+		
+		$out_method_line:=""
+		
+		  //メソッドの中身を取得し改行で切り分ける
+		METHOD GET CODE($ary_method_names{$i};$method)
+		$line_count:=JCL_str_Extract ($method;Char(Carriage return);->$ary_lines)
+		
+		  //4DのMETHOD GET CODEで付加されるコメントを除き空行までを連結
+		  //念のためLine feedを削除
+		For ($k;2;$line_count)
+			
+			If ($ary_lines{$k}="")
+				$k:=$line_count
+			Else 
+				$out_method_line:=$out_method_line+Replace string($ary_lines{$k};Char(Line feed);"")+Char(Tab)
+			End if 
+			
+		End for 
+		
+		  //タブ区切りで書き出す
+		JCL_file_WriteSJIS ($FileRef;$ary_method_names{$i})
+		JCL_file_WriteTab ($FileRef)
+		JCL_file_WriteSJIS ($FileRef;String($ary_method_dates{$i}))
+		JCL_file_WriteTab ($FileRef)
+		JCL_file_WriteSJIS ($FileRef;Time string($ary_method_times{$i}))
+		JCL_file_WriteTab ($FileRef)
+		JCL_file_WriteSJIS ($FileRef;$out_method_line)
+		JCL_file_WriteCRLF ($FileRef)
+		
+	End for 
+	
+	  //ファイルを閉じる
+	CLOSE DOCUMENT($FileRef)
+	
+End if 
+
+ALERT($filePath+"を保存しました。")

@@ -1,0 +1,31 @@
+﻿  //JCL_lst_Sort_HeaderName
+  //20160503 wat
+  // リストボックスの列名を渡して、列番号をエル
+  // リストボックスの列順（列番号）はユーザ操作によって変化する可能性があるため、列番号ではなく名前を配列に保持
+
+
+C_TEXT($1;$lstboxName)
+$lstboxName:=$1
+C_LONGINT($2;$nr)
+$nr:=$2
+C_TEXT($0;$headerName)
+$headerName:=""
+C_LONGINT($sizeOfAry)
+
+ARRAY TEXT($arrColNames;0)
+ARRAY TEXT($arrHeaderNames;0)
+ARRAY POINTER($arrColVars;0)
+ARRAY POINTER($arrHeaderVars;0)
+ARRAY BOOLEAN($arrColsVisible;0)
+ARRAY POINTER($arrStyles;0)
+LISTBOX GET ARRAYS(*;$lstboxName;$arrColNames;$arrHeaderNames;$arrColVars;$arrHeaderVars;$arrColsVisible;$arrStyles)
+
+$sizeOfAry:=Size of array($arrHeaderNames)
+If ($sizeOfAry>=$nr)
+	
+	$headerName:=$arrHeaderNames{$nr}
+	
+End if 
+
+$0:=$headerName
+

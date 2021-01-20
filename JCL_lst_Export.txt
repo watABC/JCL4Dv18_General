@@ -1,0 +1,102 @@
+﻿  //JCL_lst_Export
+  //JCL_Export_fromListBox
+  //zz_Export
+  //20140921 wat yabe
+  // 汎用のリストボックス　書き出し
+  //20180522 wat ファイル書き出し方法を変更
+  //20180522 wat 改行をストリップ
+  //20181030 wat 戻り値にファイル名を返す
+  //20190623 wat 書き出しダイアログのメッセージ修正、JCL_dlgコンポーネントにNGありで修正、JCL_lst_ExportにNGアリで修正
+
+C_POINTER($1;$lstbxPtr)
+$lstbxPtr:=$1
+C_POINTER($2)
+C_TEXT($name)
+$name:=$2->
+  //C_TEXT($0)  //20181030 wat
+C_BOOLEAN($0;$done)
+$done:=False
+C_LONGINT($dlg_ok)
+C_TEXT($buf)
+C_TEXT($tabChar;$crlf;$cr;$lf)
+C_TEXT($str)
+
+$buf:=" "  // 20140923 「ID」という文字がファイルの先頭にあるとエクセルがSYLKファイルと勘違いするため先頭に空白を出力
+$tabChar:=Char(Tab)
+$crlf:=Char(Carriage return)+Char(Line feed)
+$cr:=Char(Carriage return)
+$lf:=Char(Line feed)
+
+C_TEXT($folderPath;$filePath)
+C_LONGINT($numOfCols;$numOfRows;$col;$row)
+
+$name:=$name+JCL_str_Datemark (Current date;Current time)+".txt"
+$dlg_ok:=JCL_dlg_InputOne ("書き出し";"一覧表をデスクトップに書き出します。"+Char(13)+Char(13)+"ファイル名：";"OK";"Cancel";->$name)
+If ($dlg_ok=1)
+	  // 列数を求める
+	$numOfCols:=LISTBOX Get number of columns($lstbxPtr->)
+	$numOfRows:=LISTBOX Get number of rows($lstbxPtr->)
+	
+	ARRAY TEXT($aryColNames;0)
+	ARRAY TEXT($aryHeaderNames;0)
+	ARRAY POINTER($aryColVars;0)
+	ARRAY POINTER($aryHeaderVers;0)
+	ARRAY BOOLEAN($aryColsVisible;0)
+	ARRAY POINTER($aryStyles;0)
+	
+	LISTBOX GET ARRAYS($lstbxPtr->;$aryColNames;$aryHeaderNames;$aryColVars;$aryHeaderVers;$aryColsVisible;$aryStyles)
+	
+	  // ヘッダを出力
+	For ($col;1;$numOfCols)
+		
+		If ($col<$numOfCols)
+			
+			$str:=OBJECT Get title(*;$aryHeaderNames{$col})
+			$buf:=$buf+$str+$tabChar
+			
+		Else 
+			
+			$str:=OBJECT Get title(*;$aryHeaderNames{$col})
+			$buf:=$buf+$str+$tabChar+$crlf
+			
+		End if 
+	End for 
+	
+	  // ボディを出力
+	For ($row;1;$numOfRows)
+		
+		For ($col;1;$numOfCols)
+			
+			If ($col<$numOfCols)
+				
+				$str:=String($aryColVars{$col}->{$row})  // データ型によってはエラーになる可能性がある
+				  //20180522 wat 改行をストリップ
+				$str:=Replace string($str;$crlf;" ")
+				$str:=Replace string($str;$cr;" ")
+				$str:=Replace string($str;$lf;" ")
+				
+				$buf:=$buf+$str+$tabChar
+				
+			Else 
+				
+				$str:=String($aryColVars{$col}->{$row})  // データ型によってはエラーになる可能性がある
+				$buf:=$buf+$str+$crlf
+				
+			End if 
+		End for 
+	End for 
+	
+	  //20180522 wat ファイル書き出し方法を変更
+	$folderPath:=System folder(Desktop)
+	$filePath:=JCL_file_MakeFilePath ($folderPath;$name)
+	C_BLOB($blob)
+	TEXT TO BLOB($buf;$blob;UTF8 text without length)
+	BLOB TO DOCUMENT($filePath;$blob)
+	If (OK=1)
+		$done:=True
+	End if 
+	
+End if 
+
+$2->:=$name
+$0:=$done

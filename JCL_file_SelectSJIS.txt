@@ -1,0 +1,19 @@
+﻿  //JCL_file_SelectSJIS
+  //20171129 wat
+  //ファイルを選択して、その内容を取得
+
+C_POINTER($1)  //テキストのポインタ
+C_LONGINT($0;$open_ok)
+C_TEXT($doc_name)
+
+$doc_name:=Select document(111;"txt";"伝票ファイルを選択してください";0)
+
+$open_ok:=OK
+If ($open_ok=1)
+	
+	$1->:=Document to text(Document;"Shift-JIS";Document unchanged)
+	
+End if 
+
+  //$1->:=$fileText
+$0:=$open_ok

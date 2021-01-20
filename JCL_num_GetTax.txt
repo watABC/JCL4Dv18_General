@@ -1,0 +1,19 @@
+﻿  //JCL_num_GetTax
+  //20170312 wat
+  //税込金額から 消費税を得る 税率は％
+  //20181113 wat hisa 消費税計算NG、切り捨てができていなかった、Truncを使うようにした
+
+C_REAL($1;$amount)
+$amount:=$1
+C_REAL($2;$rate)
+$rate:=$2
+C_REAL($0;$tax)
+$tax:=0
+C_REAL($tmp)
+
+$tmp:=$amount-(($amount/(100+$rate))*100)
+
+  // 税は小数点以下を切り捨て
+$tax:=Trunc($tmp;0)
+
+$0:=$tax

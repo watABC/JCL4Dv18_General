@@ -1,0 +1,17 @@
+﻿  //JCL_pop_GetSelected_Long
+  //Jiro_pop_GetSelected_Long
+  //20101101 wat new
+  //ポップアップメニューで選択されている要素番号を取得して
+  //関連する数値配列の値を得る
+
+C_POINTER($1;$inPopupmenuPtr)
+$inPopupmenuPtr:=$1  //ポップアップメニューの配列
+C_POINTER($2;$inLongDataAryPtr)
+$inLongDataAryPtr:=$2  //ロングデータ配列のポインタ
+C_LONGINT($0;$selectedValue)
+C_LONGINT($index)
+
+$index:=$inPopupmenuPtr->
+$selectedValue:=$inLongDataAryPtr->{$index}
+
+$0:=$selectedValue

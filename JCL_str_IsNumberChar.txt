@@ -1,0 +1,20 @@
+﻿  //JCL_str_IsNumberChar
+  //Jiro_str_IsNumberChar
+  //20140123 wat
+  //数字ならトゥルー、数字じゃなければフォルス
+
+C_TEXT($1;$char)
+$char:=$1
+C_BOOLEAN($0;$isNumber)
+$isNumber:=False
+
+$code:=Character code($char)
+
+If ((48<=$code) & ($code<=57))
+	
+	$isNumber:=True
+	
+End if 
+
+
+$0:=$isNumber

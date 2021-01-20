@@ -1,0 +1,35 @@
+﻿  //JCL_file_ReadAllSJIS
+  //20180103 wat
+  //Jiro_file_ReadAllSJIS
+  //20110120 wat new
+  //EOFまでレシーブパケット、ラップ
+
+C_TIME($1;$FileRef)
+$FileRef:=$1  //ファイル参照
+C_BLOB($blob)
+C_POINTER($2)  //文字列を返す
+C_LONGINT($0;$receive_ok)  //レシーブがあれば１，なければゼロ
+C_TEXT($str)
+C_REAL($sizeOfFile)
+
+  //エラーコール
+ON ERR CALL("Jiro_file_OnErrorCall")
+
+  //ファイルからＢＬＯＢに受診
+$sizeOfFile:=Get document size($FileRef)
+
+RECEIVE PACKET($FileRef;$blob;$sizeOfFile)
+
+$receive_ok:=OK
+If ($receive_ok=1)
+	
+	  //ＢＬＯＢから文字エンコーディング
+	$str:=Convert to text($blob;"Shift-JIS")
+	
+End if 
+
+  //エラーコール終了
+ON ERR CALL("")
+
+$2->:=$str
+$0:=$receive_ok

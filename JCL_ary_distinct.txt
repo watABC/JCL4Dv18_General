@@ -1,0 +1,27 @@
+﻿  //JCL_ary_distinct
+  //20190716 wat
+  // 配列ディスティンクトして　配列にして返す　親でアロケート
+
+C_POINTER($1;$inAryPtr)
+$inAryPtr:=$1  // ターゲット配列
+C_POINTER($2;$aryPtr)
+$aryPtr:=$2  // 結果配列
+C_LONGINT($0;$cnt)
+$cnt:=0
+C_LONGINT($i;$sizeOfAry)
+C_LONGINT($index)
+
+$sizeOfAry:=Size of array($inAryPtr->)
+For ($i;1;$sizeOfAry)
+	
+	$index:=Find in array($aryPtr->;$inAryPtr->{$i})
+	If ($index=-1)
+		  //見つからなかった場合
+		APPEND TO ARRAY($aryPtr->;$inAryPtr->{$i})
+		$cnt:=$cnt+1
+		
+	End if 
+	
+End for 
+
+$0:=$cnt

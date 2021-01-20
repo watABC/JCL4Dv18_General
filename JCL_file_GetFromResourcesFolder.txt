@@ -1,0 +1,23 @@
+﻿  //JCL_file_GetFromResourcesFolder
+  //20180122 wat
+  //リソースフォルダの　所定のフォルダから　所定のファイルを 所定のエンコードで取得
+
+C_TEXT($1;$inFolder)
+$inFolder:=$1
+C_TEXT($2;$inFileName)
+$inFileName:=$2
+C_TEXT($3;$inEncode)
+$inEncode:=$3
+C_TEXT($fileText;$0)
+$fileText:=""
+C_TEXT($folderPath;$filePath)
+C_BLOB($blob)
+
+$folderPath:=JCL_file_MakeFilePath (Get 4D folder(Current resources folder);$inFolder)
+$filePath:=JCL_file_MakeFilePath ($folderPath;$inFileName)
+
+  //ファイルの内容を読み込んで　エンコード
+DOCUMENT TO BLOB($filePath;$blob)
+$fileText:=Convert to text($blob;$inEncode)
+
+$0:=$fileText

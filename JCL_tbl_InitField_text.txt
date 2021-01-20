@@ -1,0 +1,37 @@
+﻿  //JCL_tbl_InitField_text
+  //20190813 wat
+  //テキストフィールドを初期化する、キーバリューの値が空白ならば実行
+
+C_TEXT($1;$key)
+$key:=$1
+C_POINTER($2;$tblPtr)
+$tblPtr:=$2
+C_POINTER($3;$fieldPtr)
+$fieldPtr:=$3
+C_LONGINT($0)
+C_LONGINT($numOfRecs;$i)
+
+  //ALERT("start")
+$applied:=KV_VALUE ($key)
+If ($applied="")
+	
+	READ WRITE($tblPtr->)
+	ALL RECORDS($tblPtr->)
+	FIRST RECORD($tblPtr->)
+	$numOfRecs:=Records in selection($tblPtr->)
+	For ($i;1;$numOfRecs)
+		
+		GOTO SELECTED RECORD($tblPtr->;$i)
+		$fieldPtr->:=""
+		SAVE RECORD($tblPtr->)
+		
+	End for 
+	
+	UNLOAD RECORD($tblPtr->)
+	READ ONLY($tblPtr->)
+	
+	KV_VALUE_save ($key;"applied")
+	
+End if 
+
+  //ALERT("end")

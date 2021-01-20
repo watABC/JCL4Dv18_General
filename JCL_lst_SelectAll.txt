@@ -1,0 +1,16 @@
+﻿  //JCL_lst_SelectAll
+  //20160426 wat
+  // リストボックスの行をすべて選択する
+
+C_POINTER($1;$lstbox_ptr)
+$lstbox_ptr:=$1
+C_LONGINT($i;$sizeOfAry)
+
+$sizeOfAry:=Size of array($lstbox_ptr->)
+For ($i;1;$sizeOfAry)
+	
+	LISTBOX SELECT ROW($lstbox_ptr->;$i;Listbox add to selection)
+	
+End for 
+
+OBJECT SET SCROLL POSITION($lstbox_ptr->)

@@ -1,0 +1,18 @@
+﻿  //JCL_excl_Extract_GetTitle
+  //20190926 wat
+  //タブ区切りテキストから、列番目の値を返す
+
+C_TEXT($header_buf;$1)
+$header_buf:=$1
+C_LONGINT($colNr;$2)
+$colNr:=$2
+C_TEXT($0;$outStr)
+$outStr:=""
+
+ARRAY TEXT($itemAry;0)
+C_LONGINT($numOfCols)
+$numOfCols:=JCL_str_Extract ($header_buf;Char(Tab);->$itemAry)
+
+$outStr:=$itemAry{$colNr}
+
+$0:=$outStr

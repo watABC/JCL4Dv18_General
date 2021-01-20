@@ -1,0 +1,23 @@
+﻿  //JCL_str_unifyCR
+  //JCL_str_uniformCR
+  //Jiro_str_uniformCR
+  //20150828 wat
+  //改行コードを統一
+  //改行コードをCRに統一する
+
+C_TEXT($1;$txt)
+$txt:=$1
+C_TEXT($0;$retTxt)
+
+C_TEXT($CR;$LF;$CRLF)
+$CR:=Char(Carriage return)
+$LF:=Char(Line feed)
+$CRLF:=$CR+$LF
+
+  //CRLFをCRに変換
+$retTxt:=Replace string($txt;$CRLF;$CR)
+
+  //LFをCRに変換
+$retTxt:=Replace string($retTxt;$LF;$CR)
+
+$0:=$retTxt

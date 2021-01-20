@@ -1,0 +1,64 @@
+﻿  //JCL_lst_GetValue
+  //20170306 wat
+  // 汎用のリストボックス　書き出し
+
+C_POINTER($1;$lstbxPtr)
+$lstbxPtr:=$1
+C_TEXT($0;$buf)
+$buf:=" "  // 20140923 「ID」という文字がファイルの先頭にあるとエクセルがSYLKファイルと勘違いするため先頭に空白を出力
+C_TEXT($tabChar;$crChar)
+$tabChar:=Char(Tab)
+$crChar:=Char(Line feed)  //20170222
+C_TEXT($folderPath;$filePath)
+C_LONGINT($numOfCols;$numOfRows;$col;$row)
+
+  // 列数を求める
+$numOfCols:=LISTBOX Get number of columns($lstbxPtr->)
+$numOfRows:=LISTBOX Get number of rows($lstbxPtr->)
+
+ARRAY TEXT($aryColNames;0)
+ARRAY TEXT($aryHeaderNames;0)
+ARRAY POINTER($aryColVars;0)
+ARRAY POINTER($aryHeaderVers;0)
+ARRAY BOOLEAN($aryColsVisible;0)
+ARRAY POINTER($aryStyles;0)
+
+LISTBOX GET ARRAYS($lstbxPtr->;$aryColNames;$aryHeaderNames;$aryColVars;$aryHeaderVers;$aryColsVisible;$aryStyles)
+
+  // ヘッダを出力
+For ($col;1;$numOfCols)
+	
+	If ($col<$numOfCols)
+		
+		$str:=OBJECT Get title(*;$aryHeaderNames{$col})
+		$buf:=$buf+$str+$tabChar
+		
+	Else 
+		
+		$str:=OBJECT Get title(*;$aryHeaderNames{$col})
+		$buf:=$buf+$str+$tabChar+$crChar
+		
+	End if 
+End for 
+
+  // ボディを出力
+For ($row;1;$numOfRows)
+	
+	For ($col;1;$numOfCols)
+		
+		If ($col<$numOfCols)
+			
+			$str:=String($aryColVars{$col}->{$row})  // データ型によってはエラーになる可能性がある
+			
+			$buf:=$buf+$str+$tabChar
+			
+		Else 
+			
+			$str:=String($aryColVars{$col}->{$row})  // データ型によってはエラーになる可能性がある
+			$buf:=$buf+$str+$crChar
+			
+		End if 
+	End for 
+End for 
+
+$0:=$buf

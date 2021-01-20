@@ -1,0 +1,52 @@
+﻿  //JCL_file_ExportToXLSX
+  // 20190925 hisa ikeda wat
+  //エクセルファイルに書き出す、
+  //タブ区切りテキストの、ヘッダバフとボディバフを元にして
+
+C_TEXT($1;$header_buf)
+$header_buf:=$1
+C_TEXT($2;$body_buf)
+$body_buf:=$2
+C_LONGINT($rowNr;$colNr)
+C_COLLECTION($cllSheets)
+C_TEXT($cellValue)
+C_TEXT($sheetName)
+$sheetName:="bps"
+
+ARRAY TEXT($lineAry;0)
+ARRAY TEXT($rowNrtemAry;0)
+C_LONGINT($numOfRows;$numOfCols)
+$numOfCols:=JCL_str_Extract ($header_buf;Char(Tab);->$rowNrtemAry)
+$numOfRows:=JCL_str_Extract ($body_buf;Char(Carriage return);->$lineAry)
+
+  // シート配列
+$cllSheets:=New collection  // sheetsの領域ポインタを作成
+$cllSheets.push(New object("name";$sheetName;"rows";""))  // nameとrowsの領域確保
+
+$cllSheets[0].rows:=New collection  // rowsの領域ポインタを作成
+For ($rowNr;0;$numOfRows-1+1)  //ヘッダの分が１行多い
+	  // 行配列を追加
+	$cllSheets[0].rows.push(New object("values";""))  // valuesの領域確保
+	
+	  //  列（値）を追加
+	$cllSheets[0].rows[$rowNr].values:=New collection  // valeusの領域ポインタを作成
+	For ($colNr;0;$numOfCols-1)
+		  //バッファから値を取得
+		If ($rowNr=0)
+			$cellValue:=JCL_excl_Extract_GetTitle ($header_buf;$colNr+1)
+			
+		Else 
+			$cellValue:=JCL_excl_Extract_GetRC ($body_buf;$colNr+1;$rowNr)
+			
+		End if 
+		$cllSheets[0].rows[$rowNr].values.push($cellValue)  // valuesの領域が確保される
+		  //ALERT("$colNr="+string($colNr)+"["+$cellValue+"]")// アラート
+		
+	End for 
+End for 
+
+  //シート配列の親オブジェクト
+$xlsx:=New object
+OB SET($xlsx;"sheets";$cllSheets)
+
+$0:=$xlsx

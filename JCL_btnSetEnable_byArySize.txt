@@ -1,0 +1,27 @@
+﻿  //JCL_btnSetEnable_byArySize
+  //20190726 wat
+  //JCL_btnSetEnable_byExist
+  //20190615 wat
+  //配列要素が1以上あればボタンはイネイブル
+
+  //C_TEXT($1;$inListBox)
+  //$inListBox:=$1  //対象となるリストボックス名
+C_POINTER($1;$inPtr)
+$inPtr:=$1
+C_TEXT($2;$inButton)
+$inButton:=$2  //イネイブル対象となるボタン名
+C_LONGINT($sizeOfAry)
+
+  //リストに表示されている行が一つ以上の場合にイネイブル、
+  //そうでなければボタンはグレイ
+  //C_POINTER($objPtr)
+  //$objPtr:=OBJECT Get pointer(Object named;$inListBox)
+
+$sizeOfAry:=Size of array($inPtr->)
+If ($sizeOfAry>=1)
+	OBJECT SET ENABLED(*;$inButton;True)
+	
+Else 
+	OBJECT SET ENABLED(*;$inButton;False)
+	
+End if 

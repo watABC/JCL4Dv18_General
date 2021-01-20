@@ -1,0 +1,32 @@
+﻿  //JCL_ary_and
+  //20170206 wat
+  //  配列のANDを作成
+
+C_POINTER($1;$ary1ptr)
+$ary1ptr:=$1  // 比較配列
+C_POINTER($2;$ary2ptr)
+$ary2ptr:=$2  // 比較配列
+C_POINTER($3;$ary3ptr)
+$ary3ptr:=$3  // 結果配列
+C_LONGINT($i;$sizeOfAry)
+C_LONGINT($0;$cnt)
+$cnt:=0
+
+  // まず結果配列をクリア
+DELETE FROM ARRAY($ary3ptr->;1;Size of array($ary3ptr->))
+
+$sizeOfAry:=Size of array($ary2ptr->)
+For ($i;1;$sizeOfAry)
+	
+	$index:=Find in array($ary1ptr->;$ary2ptr->{$i})
+	If ($index>0)
+		
+		  // どちらにもあった要素だけを結果に追加
+		APPEND TO ARRAY($ary3ptr->;$ary2ptr->{$i})
+		$cnt:=$cnt+1
+		
+	End if 
+	
+End for 
+
+$0:=$cnt

@@ -1,0 +1,60 @@
+﻿  //JCL_frm_GetObjs
+  //20181106 wat
+  //フォームオブジェクトの名前とRectを取得、オブジェクト型の配列に格納
+  //20181226 wat v17オブジェクト記法
+
+C_POINTER($1;$ioAryObjPtr)
+$ioAryObjPtr:=$1
+C_OBJECT($obj)
+C_LONGINT($type)
+C_LONGINT($fontSize)
+C_LONGINT($x1;$y1;$x2;$y2)
+
+ARRAY TEXT($aryObjNames;0)
+ARRAY POINTER($aryObjPtrs;0)
+ARRAY LONGINT($aryObjPageNrs;0)
+FORM GET OBJECTS($aryObjNames;$aryObjPtrs;$aryObjPageNrs;Form all pages+Form inherited)
+
+DELETE FROM ARRAY($ioAryObjPtr->;1;Size of array($ioAryObjPtr->))
+
+  //すべてのオブジェクトのサイズを配列に保持
+$sizeOfAry:=Size of array($aryObjNames)
+For ($i;1;$sizeOfAry)
+	  //座標値を取得
+	$obj:=New object
+	OBJECT GET COORDINATES(*;$aryObjNames{$i};$x1;$y1;$x2;$y2)
+	$obj.name:=$aryObjNames{$i}
+	$obj.x1:=$x1
+	$obj.y1:=$y1
+	$obj.x2:=$x2
+	$obj.y2:=$y2
+	
+	  //フォントサイズを取得
+	$type:=OBJECT Get type(*;$aryObjNames{$i})
+	Case of 
+		: ($type=Object type static text)
+			$obj.fontSize:=OBJECT Get font size(*;$aryObjNames{$i})
+			
+		: ($type=Object type text input)
+			$obj.fontSize:=OBJECT Get font size(*;$aryObjNames{$i})
+			
+		: ($type=Object type push button)
+			$obj.fontSize:=OBJECT Get font size(*;$aryObjNames{$i})
+			
+		: ($type=Object type checkbox)
+			$obj.fontSize:=OBJECT Get font size(*;$aryObjNames{$i})
+			
+		: ($type=Object type radio button)
+			$obj.fontSize:=OBJECT Get font size(*;$aryObjNames{$i})
+			
+		: ($type=Object type popup dropdown list)
+			$obj.fontSize:=OBJECT Get font size(*;$aryObjNames{$i})
+			
+		Else 
+			$obj.fontSize:=0
+			
+	End case 
+	
+	APPEND TO ARRAY($ioAryObjPtr->;$obj)
+	
+End for 

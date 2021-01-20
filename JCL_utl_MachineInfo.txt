@@ -1,0 +1,25 @@
+﻿  //JCL_utl_MachineInfo
+  //20180105 yabe
+  //20190113 wat OSを取得する方法を変更
+
+C_TEXT($0;$machineInfo;$cmd;$input;$output;$error)
+
+If (Is macOS)
+	  //macOS
+	$cmd:="system_profiler SPHardwareDataType"
+	LAUNCH EXTERNAL PROCESS($cmd;$input;$output;$error)
+	$machineInfo:=$output
+	
+	$cmd:="sw_vers"
+	LAUNCH EXTERNAL PROCESS($cmd;$input;$output;$error)
+	$machineInfo:=$machineInfo+$output
+	
+Else 
+	  //Windows
+	$cmd:="systeminfo /fo table /nh"
+	SET ENVIRONMENT VARIABLE("_4D_OPTION_HIDE_CONSOLE";"true")
+	LAUNCH EXTERNAL PROCESS($cmd;$input;$output;$error)
+	$machineInfo:=$output
+End if 
+
+$0:=$machineInfo

@@ -1,0 +1,18 @@
+﻿  //JCL_frm_GetObjectSize
+  //フォームオブジェクト　文字数によってフォントサイズを小さくするため
+  //20170905 yabe wat
+
+C_TEXT($1;$fldName)
+$fldName:=$1
+C_POINTER($2;$widthPtr)
+$widthPtr:=$2
+C_POINTER($3;$heightPtr)
+$heightPtr:=$3
+C_LONGINT($left;$top;$right;$bottom)
+
+
+OBJECT GET COORDINATES(*;$fldName;$left;$top;$right;$bottom)
+
+$widthPtr->:=$right-$left
+$heightPtr->:=$bottom-$top
+

@@ -1,0 +1,60 @@
+﻿  //JCL_utl_MacAddress
+  //20180105 yabe
+  //Macアドレスを取得、Mac OSはen0を、Winは最初に見つかったものを返す
+  //20190113 wat OSを取得する方法を変更
+
+C_TEXT($0;$macAddress;$cmd;$input;$output;$error;$device)
+ARRAY TEXT($lines;0)
+C_LONGINT($i;$sizeOfAry)
+C_TEXT($key1;$key2)
+
+If (Is macOS)
+	  //macOS
+	$key1:="Device: "
+	$key2:="Ethernet Address: "
+	
+	$cmd:="networksetup -listallhardwareports"
+	LAUNCH EXTERNAL PROCESS($cmd;$input;$output;$error)
+	JCL_str_Extract ($output;Char(Line feed);->$lines)
+	$sizeOfAry:=Size of array($lines)
+	While ($i<=$sizeOfAry)
+		
+		If (Position($key1;$lines{$i})=1)
+			
+			$device:=Substring($lines{$i};Length($key1)+1)
+			
+			If ($device="en0")
+				
+				If (Position($key2;$lines{$i+1})=1)
+					
+					$macAddress:=Substring($lines{$i+1};Length($key2)+1)
+					$i:=$sizeOfAry
+					
+				End if 
+			End if 
+		End if 
+		
+		$i:=$i+1
+	End while 
+Else 
+	  //Windows
+	$key1:="物理アドレス"
+	$cmd:="ipconfig /all"
+	SET ENVIRONMENT VARIABLE("_4D_OPTION_HIDE_CONSOLE";"true")
+	LAUNCH EXTERNAL PROCESS($cmd;$input;$output;$error)
+	JCL_str_Extract ($output;Char(Line feed);->$lines)
+	$sizeOfAry:=Size of array($lines)
+	While ($i<=$sizeOfAry)
+		
+		If (Position($key1;$lines{$i})#0)
+			
+			$macAddress:=Substring($lines{$i};Length($lines{$i})-17)
+			$i:=$sizeOfAry
+			
+		End if 
+		
+		$i:=$i+1
+	End while 
+End if 
+
+$0:=$macAddress

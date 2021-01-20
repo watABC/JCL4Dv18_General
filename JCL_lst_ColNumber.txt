@@ -1,0 +1,33 @@
+﻿  //JCL_lst_ColNumber
+  //20160503 wat yabe
+  // リストボックスの列名を渡して、現在の列番号を取得　列番号はユーザ操作で変化している可能性有り
+  // ソートコマンドは列番号で指定するため、このコマンドが必要
+
+C_TEXT($1;$lstboxName)
+$lstboxName:=$1
+C_TEXT($2;$colName)
+$colName:=$2
+C_LONGINT($0;$nr)
+$nr:=0
+C_LONGINT($i;$sizeOfAry)
+
+ARRAY TEXT($arrColNames;0)
+ARRAY TEXT($arrHeaderNames;0)
+ARRAY POINTER($arrColVars;0)
+ARRAY POINTER($arrHeaderVars;0)
+ARRAY BOOLEAN($arrColsVisible;0)
+ARRAY POINTER($arrStyles;0)
+LISTBOX GET ARRAYS(*;$lstboxName;$arrColNames;$arrHeaderNames;$arrColVars;$arrHeaderVars;$arrColsVisible;$arrStyles)
+
+$sizeOfAry:=Size of array($arrHeaderNames)
+For ($i;1;$sizeOfAry)
+	
+	If ($arrHeaderNames{$i}=$colName)
+		
+		$nr:=$i
+		
+	End if 
+	
+End for 
+
+$0:=$nr

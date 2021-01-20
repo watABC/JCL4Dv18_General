@@ -1,0 +1,23 @@
+﻿  //JCL_prt_PageSetup_form
+  //20190110 wat
+  //Jiro_prt_PageSetup
+  //20101212 wat new
+  //ページセットアップをラップ
+  //20150213 wat Page setupはトル、print settingsに引数ゼロ
+
+C_POINTER($1;$tablePtr)
+$tablePtr:=$1  //テーブルへのポインタ
+C_TEXT($2;$formStr)
+$formStr:=$2  //フォーム名
+C_LONGINT($0;$dlg_ok)
+
+  //フォームの用紙設定を適用
+PAGE SETUP($tablePtr->;$formStr)
+
+  //印刷設定ダイアログを表示
+PRINT SETTINGS(0)
+
+  //ＯＫされたかどうかは環境変数から取得
+$dlg_ok:=OK
+
+$0:=$dlg_ok

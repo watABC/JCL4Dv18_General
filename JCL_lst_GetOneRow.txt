@@ -1,0 +1,45 @@
+﻿  //JCL_lst_GetOneRow
+  //20170311 wat
+  //JCL_lst_GetValue
+  // 汎用のリストボックス　書き出し
+  //20181226 wat v17オブジェクト記法
+
+C_POINTER($1;$lstbxPtr)
+$lstbxPtr:=$1
+C_LONGINT($2;$lstbx_row_nr)
+$lstbx_row_nr:=$2
+C_POINTER($3;$objPtr)
+$objPtr:=$3
+C_LONGINT($0;$retValue)
+$retValue:=0  // 配列要素がなければゼロを返す
+C_TEXT($str)
+
+ARRAY TEXT($aryColNames;0)
+ARRAY TEXT($aryHeaderNames;0)
+ARRAY POINTER($aryColVars;0)
+ARRAY POINTER($aryHeaderVers;0)
+ARRAY BOOLEAN($aryColsVisible;0)
+ARRAY POINTER($aryStyles;0)
+
+LISTBOX GET ARRAYS($lstbxPtr->;$aryColNames;$aryHeaderNames;$aryColVars;$aryHeaderVers;$aryColsVisible;$aryStyles)
+
+  // 列数を求める
+$numOfCols:=LISTBOX Get number of columns($lstbxPtr->)
+$numOfRows:=LISTBOX Get number of rows($lstbxPtr->)
+If ($numOfRows>$lstbx_row_nr)
+	
+	  // 指定された行の値をオブジェクトに取得
+	For ($col;1;$numOfCols)
+		
+		$str:=String($aryColVars{$col}->{$lstbx_row_nr})  // データ型によってはエラーになる可能性がある
+		
+		  //OB SET($objPtr->;String($col);$str)
+		$objPtr->$col:=$str
+		
+	End for 
+	
+	$retValue:=1  // 配列要素があった
+	
+End if 
+
+$0:=$retValue
